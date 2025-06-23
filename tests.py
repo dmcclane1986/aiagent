@@ -1,29 +1,29 @@
-from functions.get_files_info import get_files_info
+from functions.run_python import run_python_file
 
 def main():
-    """Run tests for the get_files_info function."""
+    """Run tests for the run_python_file function."""
     
-    print("Test 1: get_files_info('calculator', '.')")
+    print("Test 1: run_python_file('calculator', 'main.py')")
     print("=" * 50)
-    result1 = get_files_info("calculator", ".")
+    result1 = run_python_file("calculator", "main.py")
     print(result1)
     print()
     
-    print("Test 2: get_files_info('calculator', 'pkg')")
+    print("Test 2: run_python_file('calculator', 'tests.py')")
     print("=" * 50)
-    result2 = get_files_info("calculator", "pkg")
+    result2 = run_python_file("calculator", "tests.py")
     print(result2)
     print()
     
-    print("Test 3: get_files_info('calculator', '/bin') - Should return error")
+    print("Test 3: run_python_file('calculator', '../main.py') - Should return error")
     print("=" * 50)
-    result3 = get_files_info("calculator", "/bin")
+    result3 = run_python_file("calculator", "../main.py")
     print(result3)
     print()
     
-    print("Test 4: get_files_info('calculator', '../') - Should return error")
+    print("Test 4: run_python_file('calculator', 'nonexistent.py') - Should return error")
     print("=" * 50)
-    result4 = get_files_info("calculator", "../")
+    result4 = run_python_file("calculator", "nonexistent.py")
     print(result4)
     print()
 
