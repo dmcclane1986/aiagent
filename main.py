@@ -32,6 +32,49 @@ def main():
         types.Content(role="user", parts=[types.Part(text=user_prompt)]),
     ]
 
+    max_interactions = 20
+    for iteration in range(max_interactions):
+        response = client.models.generate_content(
+            model="gemini-2.0-flash-001",
+            contents=messages,
+            config=types.GenerateContentConfig(
+                tools=[available_functions], system_instruction=system_prompt
+            ),
+        )
+        if verbose:
+            print(f"\n--- Iteration {iteration+1} ---")
+            print("Prompt tokens:", response.usage_metadata.prompt_token_count)
+            print("Response tokens:", response.usage_metadata.candidates_token_count)
+         
+         
+        # Add all candidates' content to the conversation
+        function_called = False
+        for candidate in response.candidates:
+            if hasattr(candidate, "content") and candidate.content:
+                messages.append(candidate.content)
+
+        # Handle function calls
+        if response.function_calls:
+            function_called = True
+            for function_call_part in response.function_calls:
+                if verbose:
+                    print(f" - Calling function: {function_call_part.name}")
+                function_call_result = call_function(function_call_part, verbose)
+                # Append the function response to messages
+                messages.append(
+                    types.Content(
+                        role="function",
+                        parts=[function_call_result.parts[0]]
+                    )
+                )
+        # If no function was called, print final response and exit
+        if not function_called:
+            print("Final response:\n")
+            print(response.text)
+            break
+    else:
+        print("Max iterations reached. Exiting.")
+
     generate_content(client, messages, verbose)
 
 
